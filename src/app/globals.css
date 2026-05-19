@@ -1,26 +1,134 @@
 @import "tailwindcss";
-
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
+  /* ===================================
+     PRIMARY BLUE SCALE
+  =================================== */
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
+  --primary-blue-50:  #eef4ff;
+  --primary-blue-100: #dce8ff;
+  --primary-blue-200: #bfd3ff;
+  --primary-blue-300: #97b6ff;
+  --primary-blue-400: #7097ff;
+  --primary-blue-500: #5b7cff; /* main */
+  --primary-blue-600: #315efb;
+  --primary-blue-700: #2349d9;
+  --primary-blue-800: #1d3db3;
+  --primary-blue-900: #18338f;
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
-}
+  /* ===================================
+     PURPLE SCALE
+  =================================== */
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  --purple-50:  #f6efff;
+  --purple-100: #ead8ff;
+  --purple-200: #d7b7ff;
+  --purple-300: #c08eff;
+  --purple-400: #a966ff;
+  --purple-500: #8d4dff;
+  --purple-600: #7b3ff5;
+  --purple-700: #692fe0;
+  --purple-800: #5828b8;
+  --purple-900: #472090;
+
+  /* ===================================
+     PINK SCALE
+  =================================== */
+
+  --pink-50:  #fff0fb;
+  --pink-100: #ffd8f3;
+  --pink-200: #ffb3e7;
+  --pink-300: #ff85d7;
+  --pink-400: #ff69d2;
+  --pink-500: #f84ac1;
+  --pink-600: #e735ad;
+  --pink-700: #c82793;
+  --pink-800: #a71f79;
+  --pink-900: #861960;
+
+  /* ===================================
+     NEUTRAL / BACKGROUND SCALE
+  =================================== */
+
+  --neutral-50:  #ffffff;
+  --neutral-100: #fafbff;
+  --neutral-200: #f5f7fb;
+  --neutral-300: #eef1f7;
+  --neutral-400: #d9dfeb;
+  --neutral-500: #b8c1d1;
+  --neutral-600: #8f9bb3;
+  --neutral-700: #5f6b85;
+  --neutral-800: #374151;
+  --neutral-900: #111827;
+
+  /* ===================================
+     SUCCESS COLORS
+  =================================== */
+
+  --success-100: #dcfce7;
+  --success-200: #bbf7d0;
+  --success-300: #86efac;
+  --success-400: #4ade80;
+  --success-500: #22c55e;
+  --success-600: #16a34a;
+
+  /* ===================================
+     WARNING COLORS
+  =================================== */
+
+  --warning-100: #fef3c7;
+  --warning-200: #fde68a;
+  --warning-300: #fcd34d;
+  --warning-400: #fbbf24;
+  --warning-500: #f59e0b;
+  --warning-600: #d97706;
+
+  /* ===================================
+     ERROR COLORS
+  =================================== */
+
+  --error-100: #fee2e2;
+  --error-200: #fecaca;
+  --error-300: #fca5a5;
+  --error-400: #f87171;
+  --error-500: #ef4444;
+  --error-600: #dc2626;
+
+  /* ===================================
+     GLASS / EFFECT COLORS
+  =================================== */
+
+  --glass-white-10: rgba(255,255,255,0.10);
+  --glass-white-20: rgba(255,255,255,0.20);
+  --glass-white-40: rgba(255,255,255,0.40);
+  --glass-white-60: rgba(255,255,255,0.60);
+
+  --glass-blue-10: rgba(91,124,255,0.10);
+  --glass-purple-10: rgba(141,77,255,0.10);
+  --glass-pink-10: rgba(255,105,210,0.10);
+
+  /* ===================================
+     GRADIENT TOKENS
+  =================================== */
+
+  --gradient-primary:
+    linear-gradient(
+      135deg,
+      var(--primary-blue-500),
+      var(--purple-500),
+      var(--pink-400)
+    );
+
+  --gradient-soft:
+    linear-gradient(
+      180deg,
+      #ffffff,
+      #f8faff
+    );
+
+  --gradient-border:
+    linear-gradient(
+      135deg,
+      rgba(91,124,255,0.25),
+      rgba(255,105,210,0.25)
+    );
 }
