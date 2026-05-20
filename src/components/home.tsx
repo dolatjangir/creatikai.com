@@ -301,43 +301,7 @@ export default function HomePage() {
         {/* Hero Right Constellation Graph (Geometric Absolute Coordinates Alignment Mapping) */}
         <div className="lg:col-span-6 relative flex items-center justify-center min-h-[460px] mt-12 lg:mt-0 z-10">
 
-          {/* Main Central Hub Ref Anchor */}
-          <div ref={centerHubRef} className="relative w-56 h-56 rounded-full border border-[var(--primary-blue-100)]/90 bg-white shadow-2xl flex items-center justify-center p-5 z-20">
-            <div className="absolute inset-2 rounded-full border border-dashed border-[var(--primary-blue-400)] animate-spin [animation-duration:50s]" />
-            <div className="w-full h-full rounded-full border border-[var(--primary-blue-500)]/10 bg-gradient-to-tr from-white to-[var(--primary-blue-50)]/20 flex items-center justify-center shadow-inner">
-              <span className="text-5xl font-black text-[var(--primary-blue-500)] italic tracking-tighter select-none"><img width={130} src="/creatikai-logo.png"/></span>
-            </div>
-          </div>
-
-          {/* Node 1: AI (Top Right Coordinates) */}
-          <div ref={nodeAiRef} className="floating-node-card absolute top-[2%] right-[12%] sm:right-[18%] lg:right-[10%] bg-white border border-[var(--neutral-300)] rounded-xl p-3 shadow-xl flex items-center space-x-2.5 z-30 cursor-pointer">
-            <div className="w-8 h-8 rounded-lg flex items-center justify-center bg-[var(--purple-50)] text-[var(--purple-500)]"><Cpu className="w-4 h-4" /></div>
-            <span className="text-xs font-bold text-[var(--neutral-800)] tracking-tight pr-1">AI & Machine Learning</span>
-          </div>
-
-          {/* Node 2: Automation (Mid Left Coordinates) */}
-          <div ref={nodeAutoRef} className="floating-node-card absolute top-[24%] left-[0%] sm:left-[6%] lg:left-[-2%] bg-white border border-[var(--neutral-300)] rounded-xl p-3 shadow-xl flex items-center space-x-2.5 z-30 cursor-pointer">
-            <div className="w-8 h-8 rounded-lg flex items-center justify-center bg-[var(--primary-blue-50)] text-[var(--primary-blue-500)]"><Network className="w-4 h-4" /></div>
-            <span className="text-xs font-bold text-[var(--neutral-800)] tracking-tight pr-1">Automation Solutions</span>
-          </div>
-
-          {/* Node 3: Cloud (Mid Right Coordinates) */}
-          <div ref={nodeCloudRef} className="floating-node-card absolute top-[30%] -right-[4%] sm:right-[2%] lg:-right-[6%] bg-white border border-[var(--neutral-300)] rounded-xl p-3 shadow-xl flex items-center space-x-2.5 z-30 cursor-pointer">
-            <div className="w-8 h-8 rounded-lg flex items-center justify-center bg-[var(--primary-blue-50)] text-[var(--primary-blue-400)]"><Cloud className="w-4 h-4" /></div>
-            <span className="text-xs font-bold text-[var(--neutral-800)] tracking-tight pr-1">Cloud Solutions</span>
-          </div>
-
-          {/* Node 4: Custom Software (Lower Right Coordinates) */}
-          <div ref={nodeCustomRef} className="floating-node-card absolute bottom-[16%] right-[2%] sm:right-[8%] lg:right-[-2%] bg-white border border-[var(--neutral-300)] rounded-xl p-3 shadow-xl flex items-center space-x-2.5 z-30 cursor-pointer">
-            <div className="w-8 h-8 rounded-lg flex items-center justify-center bg-[var(--pink-50)] text-[var(--pink-500)]"><Code className="w-4 h-4" /></div>
-            <span className="text-xs font-bold text-[var(--neutral-800)] tracking-tight pr-1">Custom Software</span>
-          </div>
-
-          {/* Node 5: Data Analytics (Lower Left Coordinates) */}
-          <div ref={nodeDataRef} className="floating-node-card absolute bottom-[4%] left-[16%] sm:left-[22%] lg:left-[14%] bg-white border border-[var(--neutral-300)] rounded-xl p-3 shadow-xl flex items-center space-x-2.5 z-30 cursor-pointer">
-            <div className="w-8 h-8 rounded-lg flex items-center justify-center bg-[var(--purple-50)] text-[var(--purple-500)]"><BarChart3 className="w-4 h-4" /></div>
-            <span className="text-xs font-bold text-[var(--neutral-800)] tracking-tight pr-1">Data & Analytics</span>
-          </div>
+       <img src="/new12.png" className="w-[110%]"/>
 
         </div>
       </section>
@@ -422,20 +386,87 @@ export default function HomePage() {
       {/* =========================================================================
           5. METRICS HUD STRIP
           ========================================================================= */}
-      <section className="w-full bg-[var(--neutral-900)] text-white py-12 px-6 lg:px-16 border-y border-[var(--neutral-800)]">
-        <div className="max-w-7xl mx-auto grid grid-cols-2 lg:grid-cols-4 gap-8 text-center">
-          {metricsData.map((metric) => (
-            <div key={metric.id} className={`space-y-1.5 ${metric.borderRight ? 'lg:border-r lg:border-[var(--neutral-800)]/80 pr-2' : ''}`}>
-              <div className="inline-flex items-center justify-center p-2 rounded-xl bg-[var(--neutral-800)] text-[var(--primary-blue-400)] border border-[var(--neutral-800)]/60">{metric.icon}</div>
-              <h3 className="text-3xl font-black text-white tracking-tight">{metric.value}</h3>
-              <div>
-                <p className="text-xs font-bold text-[var(--neutral-200)] tracking-tight">{metric.label}</p>
-                <p className="text-[10px] text-[var(--neutral-600)] font-medium">{metric.subLabel}</p>
-              </div>
-            </div>
-          ))}
+    <section className="relative w-full bg-[var(--neutral-900)] text-white py-16 lg:py-20 px-6 lg:px-16 overflow-hidden">
+  {/* Subtle ambient glow */}
+  <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[300px] bg-[var(--primary-blue-500)]/5 rounded-full blur-[120px] pointer-events-none" />
+  <div className="absolute top-0 right-0 w-[300px] h-[300px] bg-[var(--purple-500)]/5 rounded-full blur-[100px] pointer-events-none" />
+
+  {/* Background SVG Pattern */}
+  <svg
+    className="absolute inset-0 w-full h-full pointer-events-none opacity-[0.07]"
+    xmlns="http://www.w3.org/2000/svg"
+    preserveAspectRatio="none"
+  >
+    <defs>
+      <pattern id="metrics-grid" width="60" height="60" patternUnits="userSpaceOnUse">
+        <path
+          d="M 60 0 L 0 0 0 60"
+          fill="none"
+          stroke="url(#metrics-gradient)"
+          strokeWidth="0.5"
+        />
+        <circle cx="0" cy="0" r="1" fill="var(--primary-blue-500)" opacity="0.6" />
+      </pattern>
+      <linearGradient id="metrics-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+        <stop offset="0%" stopColor="var(--primary-blue-500)" stopOpacity="0.4" />
+        <stop offset="50%" stopColor="var(--purple-500)" stopOpacity="0.2" />
+        <stop offset="100%" stopColor="var(--pink-400)" stopOpacity="0.1" />
+      </linearGradient>
+    </defs>
+    <rect width="100%" height="100%" fill="url(#metrics-grid)" />
+  </svg>
+
+  {/* Floating geometric accent shapes */}
+  <svg className="absolute top-8 left-8 w-16 h-16 text-[var(--primary-blue-500)]/10 pointer-events-none" viewBox="0 0 64 64" fill="none">
+    <circle cx="32" cy="32" r="30" stroke="currentColor" strokeWidth="1" strokeDasharray="4 4" />
+  </svg>
+  <svg className="absolute bottom-8 right-12 w-20 h-20 text-[var(--purple-500)]/10 pointer-events-none" viewBox="0 0 80 80" fill="none">
+    <rect x="10" y="10" width="60" height="60" rx="12" stroke="currentColor" strokeWidth="1" strokeDasharray="4 4" />
+  </svg>
+
+  <div className="relative z-10 max-w-7xl mx-auto grid grid-cols-2 lg:grid-cols-4 gap-8 lg:gap-6 text-center">
+    {metricsData.map((metric, index) => (
+      <div
+        key={metric.id}
+        className={`
+          relative group space-y-3 p-4 rounded-2xl transition-all duration-300
+          hover:bg-[var(--neutral-800)]/40
+          ${metric.borderRight ? 'lg:border-r lg:border-[var(--neutral-800)]/60' : ''}
+        `}
+      >
+        {/* Icon container */}
+        <div className="inline-flex items-center justify-center w-12 h-12 rounded-xl bg-gradient-to-br from-[var(--neutral-800)] to-[var(--neutral-900)] text-[var(--primary-blue-400)] border border-[var(--neutral-800)] shadow-[0_4px_20px_rgba(91,124,255,0.08)] group-hover:shadow-[0_4px_24px_rgba(91,124,255,0.15)] group-hover:border-[var(--primary-blue-500)]/30 transition-all duration-300">
+          {metric.icon}
         </div>
-      </section>
+
+        {/* Value with gradient */}
+        <h3
+          className="text-3xl sm:text-4xl font-black tracking-tight"
+          style={{
+            background: 'linear-gradient(135deg, #ffffff 0%, var(--primary-blue-300) 100%)',
+            WebkitBackgroundClip: 'text',
+            WebkitTextFillColor: 'transparent',
+          }}
+        >
+          {metric.value}
+        </h3>
+
+        {/* Label */}
+        <div className="space-y-1">
+          <p className="text-xs font-bold text-[var(--neutral-200)] tracking-wide uppercase">
+            {metric.label}
+          </p>
+          <p className="text-[10px] text-[var(--neutral-600)] font-medium leading-relaxed">
+            {metric.subLabel}
+          </p>
+        </div>
+
+        {/* Bottom accent line on hover */}
+        <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-0 h-[2px] bg-gradient-to-r from-[var(--primary-blue-500)] to-[var(--purple-500)] rounded-full group-hover:w-12 transition-all duration-300" />
+      </div>
+    ))}
+  </div>
+</section>
 
       {/* =========================================================================
           6. DIGITAL TRANSFORMATION HUB (Media Badging & Overlays)
@@ -492,7 +523,7 @@ export default function HomePage() {
           ========================================================================= */}
       <section id="solutions" className="pt-28 pb-16 px-6 lg:px-16 max-w-7xl mx-auto">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
-          <div className="lg:col-span-4 bg-gradient-to-br from-[var(--neutral-900)] to-[var(--primary-blue-950)] text-white rounded-3xl p-6 space-y-5 border border-[var(--neutral-800)] shadow-lg">
+          <div className="lg:col-span-4 bg-gradient-to-br from-[var(--neutral-900)] to-[var(--primary-blue-900)] text-white rounded-3xl p-6 space-y-5 border border-[var(--neutral-800)] shadow-lg">
             <Terminal className="w-7 h-7 text-[var(--primary-blue-400)]" />
             <h3 className="text-md font-bold tracking-tight">Developer Compliance Ready</h3>
             <p className="text-xs text-[var(--neutral-500)] leading-relaxed font-medium">All deployment endpoints support unified telemetry formatting, OpenAPI specification generation models, and encrypted webhooks natively.</p>

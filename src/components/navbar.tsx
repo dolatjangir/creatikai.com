@@ -1,26 +1,98 @@
 "use client";
 
-import React, { useState } from "react";
-import { Home, ArrowRight, Sparkles, Menu, X } from "lucide-react";
+import React, { useState, useRef, useEffect } from "react";
+import { Home, ArrowRight, Sparkles, Menu, X, ChevronDown } from "lucide-react";
+import Link from "next/link";
+
 
 // Define strict types for our navigation items
 interface NavItem {
   label: string;
   icon?: React.ReactNode;
   href: string;
+  submenu?: SubmenuCategory[];
 }
+
+interface SubmenuCategory {
+  title: string;
+  items: { label: string; href: string }[];
+}
+
+const submenuData: SubmenuCategory[] = [
+  {
+    title: "AI Studio",
+    items: [
+      { label: "Business Enhance", href: "#" },
+      { label: "Video Creation", href: "#" },
+      { label: "Content Creation", href: "#" },
+    ],
+  },
+  {
+    title: "Training",
+    items: [
+      { label: "AI Training", href: "#" },
+      { label: "Education with AI", href: "#" },
+      { label: "Digital Marketing", href: "#" },
+    ],
+  },
+  {
+    title: "AI Automation",
+    items: [
+      { label: "Workflow Automation", href: "#" },
+      { label: "Process Optimization", href: "#" },
+      { label: "Smart Integrations", href: "#" },
+    ],
+  },
+  {
+    title: "AI Tools Consulting",
+    items: [
+      { label: "Strategy Planning", href: "#" },
+      { label: "Implementation Support", href: "#" },
+      { label: "Performance Analysis", href: "#" },
+    ],
+  },
+];
 
 export default function Navbar() {
   const [activeTab, setActiveTab] = useState<string>("Home");
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState<boolean>(false);
+  const [hoveredNav, setHoveredNav] = useState<string | null>(null);
+  const [mobileExpandedSubmenu, setMobileExpandedSubmenu] = useState<string | null>(null);
+  const submenuTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   const navItems: NavItem[] = [
     { label: "Home", icon: <Home className="w-4 h-4" />, href: "#" },
-    { label: "Tasks", href: "#" },
-    { label: "Scan", href: "#" },
-    { label: "Payments", href: "#" },
-    { label: "Profile", href: "#" },
+    { label: "About", href: "/about-us" },
+    { label: "Training", href: "#" },
+    {
+      label: "Services",
+      href: "#",
+      submenu: submenuData,
+    },
+    { label: "Creatik Ai", href: "#" },
   ];
+
+  const handleMouseEnter = (label: string) => {
+    if (submenuTimeoutRef.current) {
+      clearTimeout(submenuTimeoutRef.current);
+      submenuTimeoutRef.current = null;
+    }
+    setHoveredNav(label);
+  };
+
+  const handleMouseLeave = () => {
+    submenuTimeoutRef.current = setTimeout(() => {
+      setHoveredNav(null);
+    }, 150);
+  };
+
+  useEffect(() => {
+    return () => {
+      if (submenuTimeoutRef.current) {
+        clearTimeout(submenuTimeoutRef.current);
+      }
+    };
+  }, []);
 
   return (
     <header className="w-full fixed top-0 left-0 z-50 px-4 py-6 md:px-8 flex justify-center">
@@ -30,21 +102,6 @@ export default function Navbar() {
         {/* Left Side: Brand Logo */}
         <div className="flex items-center gap-2.5 group cursor-pointer select-none">
           <div className="relative flex items-center justify-center">
-            {/* Custom SVG replicating the stylized "C" logo */}
-            {/* <svg 
-              className="w-8 h-8 text-indigo-600 transition-transform duration-300 group-hover:scale-105" 
-              viewBox="0 0 32 32" 
-              fill="none" 
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path 
-                d="M24 16C24 20.4183 20.4183 24 16 24C11.5817 24 8 20.4183 8 16C8 11.5817 11.5817 8 16 8C19.2 8 21.95 9.88 23.2 12.6" 
-                stroke="currentColor" 
-                strokeWidth="4.5" 
-                strokeLinecap="round"
-              />
-              <circle cx="16" cy="16" r="2.5" fill="currentColor" />
-            </svg> */}
             <img width={40} src="/creatikai-logo.png"/>
             {/* Top right tiny sparkle on Logo */}
             <Sparkles className="w-3 h-3 text-indigo-400 absolute -top-1 -right-1 opacity-80" />
@@ -59,9 +116,17 @@ export default function Navbar() {
         <div className="hidden md:flex items-center gap-1 bg-slate-50/50 dark:bg-slate-900/30 p-1 rounded-full">
           {navItems.map((item, index) => {
             const isActive = activeTab === item.label;
+            const hasSubmenu = !!item.submenu;
+            const isSubmenuOpen = hoveredNav === item.label;
+
             return (
-              <div key={item.label} className="flex items-center">
-                <button
+              <div 
+                key={item.label} 
+                className="flex items-center relative"
+                onMouseEnter={() => hasSubmenu && handleMouseEnter(item.label)}
+                onMouseLeave={handleMouseLeave}
+              >
+               <Link href={item.href}
                   onClick={() => setActiveTab(item.label)}
                   className={`relative px-5 py-2.5 text-sm font-medium transition-all duration-300 rounded-full flex items-center gap-2 cursor-pointer outline-none
                     ${isActive 
@@ -72,12 +137,49 @@ export default function Navbar() {
                 >
                   {item.icon && <span className="opacity-90">{item.icon}</span>}
                   <span>{item.label}</span>
+                  {hasSubmenu && (
+                    <ChevronDown 
+                      className={`w-3.5 h-3.5 transition-transform duration-200 ${isSubmenuOpen ? "rotate-180" : ""}`} 
+                    />
+                  )}
 
                   {/* Active bottom accent bar */}
                   {isActive && (
                     <span className="absolute bottom-1 left-1/2 -translate-x-1/2 w-6 h-0.5 bg-blue-600 dark:bg-blue-400 rounded-full" />
                   )}
-                </button>
+                </Link>
+
+                {/* Desktop Submenu Dropdown */}
+                {hasSubmenu && isSubmenuOpen && (
+                  <div 
+                    className="absolute top-full left-1/2 -translate-x-1/2 pt-3"
+                    onMouseEnter={() => handleMouseEnter(item.label)}
+                    onMouseLeave={handleMouseLeave}
+                  >
+                    <div className="bg-white/90 dark:bg-slate-900/90 backdrop-blur-xl rounded-2xl border border-slate-100 dark:border-slate-800 shadow-[0_8px_30px_rgb(0,0,0,0.08)] p-5 min-w-[520px]">
+                      <div className="grid grid-cols-2 gap-x-6 gap-y-4">
+                        {item.submenu!.map((category) => (
+                          <div key={category.title} className="flex flex-col gap-2">
+                            <h4 className="text-xs font-semibold uppercase tracking-wider text-slate-400 dark:text-slate-500 mb-1">
+                              {category.title}
+                            </h4>
+                            <div className="flex flex-col gap-0.5">
+                              {category.items.map((subItem) => (
+                                <a
+                                  key={subItem.label}
+                                  href={subItem.href}
+                                  className="px-3 py-2 text-sm text-slate-600 dark:text-slate-400 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-blue-50/50 dark:hover:bg-blue-950/20 rounded-lg transition-all duration-200"
+                                >
+                                  {subItem.label}
+                                </a>
+                              ))}
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                )}
 
                 {/* Subtle Vertical Divider between tabs (except after the last item) */}
                 {index < navItems.length - 1 && (
@@ -120,23 +222,61 @@ export default function Navbar() {
           <div className="flex flex-col gap-1">
             {navItems.map((item) => {
               const isActive = activeTab === item.label;
+              const hasSubmenu = !!item.submenu;
+              const isMobileSubmenuExpanded = mobileExpandedSubmenu === item.label;
+
               return (
-                <button
-                  key={item.label}
-                  onClick={() => {
-                    setActiveTab(item.label);
-                    setIsMobileMenuOpen(false);
-                  }}
-                  className={`w-full px-4 py-3 text-left font-medium text-sm rounded-xl flex items-center gap-3 transition-colors
-                    ${isActive 
-                      ? "text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-950/30" 
-                      : "text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800/50"
-                    }
-                  `}
-                >
-                  {item.icon}
-                  <span>{item.label}</span>
-                </button>
+                <div key={item.label} className="flex flex-col">
+                <Link href={item.href}
+                    onClick={() => {
+                      if (hasSubmenu) {
+                        setMobileExpandedSubmenu(isMobileSubmenuExpanded ? null : item.label);
+                      } else {
+                        setActiveTab(item.label);
+                        setIsMobileMenuOpen(false);
+                      }
+                    }}
+                    className={`w-full px-4 py-3 text-left font-medium text-sm rounded-xl flex items-center justify-between gap-3 transition-colors
+                      ${isActive 
+                        ? "text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-950/30" 
+                        : "text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800/50"
+                      }
+                    `}
+                  >
+                    <div className="flex items-center gap-3">
+                      {item.icon}
+                      <span>{item.label}</span>
+                    </div>
+                    {hasSubmenu && (
+                      <ChevronDown 
+                        className={`w-4 h-4 transition-transform duration-200 ${isMobileSubmenuExpanded ? "rotate-180" : ""}`} 
+                      />
+                    )}
+                  </Link>
+
+                  {/* Mobile Submenu Accordion */}
+                  {hasSubmenu && isMobileSubmenuExpanded && (
+                    <div className="ml-4 mt-1 mb-2 flex flex-col gap-3 border-l border-slate-200 dark:border-slate-700 pl-4">
+                      {item.submenu!.map((category) => (
+                        <div key={category.title} className="flex flex-col gap-1">
+                          <h4 className="text-[11px] font-semibold uppercase tracking-wider text-slate-400 dark:text-slate-500 px-2">
+                            {category.title}
+                          </h4>
+                          {category.items.map((subItem) => (
+                            <a
+                              key={subItem.label}
+                              href={subItem.href}
+                              onClick={() => setIsMobileMenuOpen(false)}
+                              className="px-2 py-2 text-sm text-slate-600 dark:text-slate-400 hover:text-blue-600 dark:hover:text-blue-400 rounded-lg transition-colors"
+                            >
+                              {subItem.label}
+                            </a>
+                          ))}
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
               );
             })}
           </div>
