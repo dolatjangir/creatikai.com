@@ -9,6 +9,7 @@ import {
   ChevronDown, Menu, X, Mail, MapPin, Terminal, ExternalLink
 } from 'lucide-react';
 import { FaLinkedin, FaTwitter } from 'react-icons/fa6';
+import CreativeHero from './creativehero';
 
 // =========================================================================
 // INTERFACES & STATIC CONFIGURATIONS
@@ -198,7 +199,7 @@ export default function HomePage() {
   ];
 
   return (
-    <div className="w-full bg-[var(--neutral-100)] text-[var(--neutral-700)] pt-12 font-sans overflow-x-hidden selection:bg-[var(--primary-blue-500)] selection:text-white antialiased">
+    <div className="w-full bg-[var(--neutral-100)] text-[var(--neutral-700)]  font-sans overflow-x-hidden selection:bg-[var(--primary-blue-500)] selection:text-white antialiased">
 
       {/* =========================================================================
           1. STICKY HEADER SYSTEM
@@ -254,58 +255,70 @@ export default function HomePage() {
       {/* =========================================================================
           2. HERO SECTION (Dynamic Vector Canvas Map via GSAP Node Tracking)
           ========================================================================= */}
-      <section id="home" ref={heroContainerRef} className="relative pt-16 pb-28 px-6 lg:px-16 max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+   <section 
+  id="home" 
+  ref={heroContainerRef} 
+  className="relative min-h-screen flex items-center pt-12 overflow-hidden bg-white"
+>
+  {/* Clean Background Image - No Fog */}
+  <div 
+    className="absolute inset-0 bg-[url('/creatikai-hero-bg-big-screen.png')] bg-no-repeat bg-center bg-cover"
+    aria-hidden="true"
+  />
+  
+  {/* Sharp Gradient Overlay - No Blur/Fog */}
+ 
 
-        {/* Dynamic Absolute SVG Layer across whole hero canvas */}
-        <svg className="absolute inset-0 w-full h-full pointer-events-none select-none z-0" xmlns="http://www.w3.org/2000/svg">
-          <g filter="drop-shadow(0px 4px 12px rgba(91, 124, 255, 0.04))">
-            <path ref={pathAiRef} className="network-vector-path stroke-[var(--purple-400)]/50" strokeWidth="2" strokeDasharray="5 5" fill="none" />
-            <path ref={pathAutoRef} className="network-vector-path stroke-[var(--primary-blue-400)]/60" strokeWidth="2" strokeDasharray="5 5" fill="none" />
-            <path ref={pathCloudRef} className="network-vector-path stroke-[var(--primary-blue-300)]/50" strokeWidth="2" strokeDasharray="5 5" fill="none" />
-            <path ref={pathCustomRef} className="network-vector-path stroke-[var(--pink-400)]/50" strokeWidth="2" strokeDasharray="5 5" fill="none" />
-            <path ref={pathDataRef} className="network-vector-path stroke-[var(--purple-400)]/60" strokeWidth="2" strokeDasharray="5 5" fill="none" />
-          </g>
-        </svg>
+  {/* Content */}
+  <div className="relative z-10 w-full max-w-7xl mx-auto px-6 lg:px-16 py-32 lg:py-40">
+    <div className="max-w-2xl space-y-6">
+      
+      {/* Premium Eyebrow */}
+      <div className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-[#100556]/5 border border-[#100556]/10">
+        <span className="w-2 h-2 rounded-full bg-[#FF4B82]" />
+        <span className="text-sm font-semibold text-[#100556] tracking-widest uppercase">
+          Welcome to CreatikAi
+        </span>
+      </div>
 
-        <div className="absolute top-24 right-0 w-[500px] h-[500px] bg-[var(--primary-blue-400)]/5 rounded-full blur-3xl pointer-events-none -z-10" />
+      {/* Headline */}
+      <h1 className="space-y-1">
+        <span className="block text-4xl sm:text-5xl lg:text-6xl font-black tracking-tight text-[#100556] leading-[1.05]">
+          Transform Your
+        </span>
+        <span className="block text-4xl sm:text-5xl lg:text-6xl font-black tracking-tight leading-[1.05]">
+          <span className="text-[#100556]">Business</span>{' '}
+          <span className="relative inline-block text-[#0099FF]">
+            Future
+            <span className="absolute -bottom-1 left-0 w-full h-1 bg-[#FF4B82]/30 rounded-full" />
+          </span>
+        </span>
+      </h1>
 
-        {/* Hero Left Content Column */}
-        <div className="lg:col-span-6 space-y-7 text-center lg:text-left relative z-10">
-          <div className="hero-text-item inline-flex items-center space-x-2 bg-[var(--primary-blue-50)]/80 border border-[var(--primary-blue-100)] text-[var(--primary-blue-500)] px-3.5 py-1.5 rounded-full text-[11px] font-extrabold tracking-wider uppercase shadow-xs">
-            <Sparkles className="w-3 h-3 text-[var(--primary-blue-500)]" />
-            <span>• AI</span><span className="text-[var(--primary-blue-300)]">•</span><span>Automation</span><span className="text-[var(--primary-blue-300)]">•</span><span>Digital Innovation</span>
-          </div>
+      {/* Subheadline */}
+      <p className="text-lg text-[#100556]/70 max-w-xl leading-relaxed font-medium">
+        We architect intelligent digital ecosystems that automate processes, 
+        unlock data-driven insights, and scale your operations beyond limits.
+      </p>
 
-          <h1 className="hero-text-item text-4xl sm:text-5xl lg:text-[54px] font-black tracking-tight text-[var(--neutral-900)] leading-[1.12]">
-            We Build Intelligent <br className="hidden sm:inline" />
-            Solutions That Drive <br />
-            Real <span className="text-[var(--primary-blue-500)] relative inline-block">Business Impact<span className="absolute bottom-1 left-0 w-full h-[4px] bg-[var(--primary-blue-100)] -z-10 rounded-full" /></span>
-          </h1>
+      {/* Premium Tags */}
+      <div className="flex flex-wrap gap-3 pt-2">
+        {['AI Infrastructure', 'Process Automation', 'Digital Transformation'].map((tag) => (
+          <span 
+            key={tag}
+            className="px-5 py-2.5 rounded-lg bg-white border border-[#100556]/10 text-sm font-semibold text-[#100556] shadow-sm shadow-[#100556]/5"
+          >
+            {tag}
+          </span>
+        ))}
+      </div>
+    </div>
+  </div>
 
-          <p className="hero-text-item text-sm sm:text-base text-[var(--neutral-600)] max-w-xl mx-auto lg:mx-0 leading-relaxed font-medium">
-            Creatik IT Solution helps businesses transform, innovate, and scale with cutting-edge artificial intelligence infrastructure, process automation loops, and high-performance digital ecosystems.
-          </p>
-
-          <div className="hero-text-item flex flex-wrap items-center justify-center lg:justify-start gap-4 pt-3">
-            <button className="flex items-center space-x-2.5 px-7 py-3.5 bg-[var(--primary-blue-500)] text-white font-bold text-sm rounded-xl hover:bg-[var(--primary-blue-600)] shadow-xl shadow-[var(--primary-blue-500)]/20 transition-all cursor-pointer group">
-              <span>Explore Our Services</span>
-              <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
-            </button>
-            <button className="flex items-center space-x-2 px-7 py-3.5 bg-white border border-[var(--neutral-400)] text-[var(--neutral-800)] font-bold text-sm rounded-xl hover:bg-[var(--neutral-200)] transition-all cursor-pointer">
-              <span>Let's Talk</span>
-              <PhoneCall className="w-4 h-4 text-[var(--neutral-500)]" />
-            </button>
-          </div>
-        </div>
-
-        {/* Hero Right Constellation Graph (Geometric Absolute Coordinates Alignment Mapping) */}
-        <div className="lg:col-span-6 relative flex items-center justify-center min-h-[460px] mt-12 lg:mt-0 z-10">
-
-       <img src="/new12.png" className="w-[110%]"/>
-
-        </div>
-      </section>
-
+  {/* Minimal Accent - Sharp Geometric */}
+  <div className="absolute top-0 right-0 w-1/3 h-full bg-gradient-to-l from-[#0099FF]/5 to-transparent" aria-hidden="true" />
+</section>
+<CreativeHero/>
       {/* =========================================================================
           3. LOGO RUNWAY STRIP
           ========================================================================= */}
