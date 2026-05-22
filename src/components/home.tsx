@@ -10,6 +10,8 @@ import {
 } from 'lucide-react';
 import { FaLinkedin, FaTwitter } from 'react-icons/fa6';
 import CreativeHero from './creativehero';
+import { AnimatePresence,motion } from 'framer-motion';
+import AgencySection from './solution-agencys';
 
 // =========================================================================
 // INTERFACES & STATIC CONFIGURATIONS
@@ -49,7 +51,7 @@ export default function HomePage() {
   const [selectedServiceTab, setSelectedServiceTab] = useState<number>(0);
   const [faqOpen, setFaqOpen] = useState<number | null>(0);
   const [videoModalOpen, setVideoModalOpen] = useState<boolean>(false);
-
+   const [showCreative, setShowCreative] = useState(true);
   // =========================================================================
   // DOM REFS FOR GSAP DYNAMIC SVG NETWORK LINES
   // =========================================================================
@@ -69,6 +71,14 @@ export default function HomePage() {
   const pathCloudRef = useRef<SVGPathElement>(null);
   const pathCustomRef = useRef<SVGPathElement>(null);
   const pathDataRef = useRef<SVGPathElement>(null);
+    // Infinite Toggle Animation
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setShowCreative((prev) => !prev);
+    }, 2500);
+
+    return () => clearInterval(interval);
+  }, []);
 
   // Scroll Lifecycle hook
   useEffect(() => {
@@ -158,18 +168,6 @@ export default function HomePage() {
     return () => window.removeEventListener('resize', updateNetworkLines);
   }, []);
 
-  // =========================================================================
-  // DATASHEET CONTENT
-  // =========================================================================
-  const navLinks: NavLinkItem[] = [
-    { label: "Home", href: "#home" },
-    { label: "About Us", href: "#about" },
-    { label: "Services", href: "#services", hasDropdown: true, dropdownItems: ["AI & Machine Learning", "Automation Solutions", "Cloud & DevOps", "Custom Software", "Data Analytics"] },
-    { label: "Solutions", href: "#solutions", hasDropdown: true, dropdownItems: ["Enterprise Design", "SaaS Structuring"] },
-    { label: "Industries", href: "#industries" },
-    { label: "Resources", href: "#resources" },
-    { label: "Company", href: "#company" }
-  ];
 
   const servicesData = [
     { id: 0, icon: <Cpu />, title: "AI & Machine Learning", tagline: "Cognitive Neural Architecture", description: "Build intelligent systems that learn, adapt, and drive smarter enterprise decisions via deep data mapping models.", badgeText: "Core Tech", features: ["Predictive Analytics Engines", "Natural Language Parsers", "Computer Vision Integration", "Custom LLM Fine-Tuning Models"] },
@@ -201,60 +199,11 @@ export default function HomePage() {
   return (
     <div className="w-full bg-[var(--neutral-100)] text-[var(--neutral-700)]  font-sans overflow-x-hidden selection:bg-[var(--primary-blue-500)] selection:text-white antialiased">
 
-      {/* =========================================================================
-          1. STICKY HEADER SYSTEM
-          ========================================================================= */}
-      {/* <header className={`sticky top-0 z-50 w-full transition-all duration-300 px-6 lg:px-16 py-4 flex items-center justify-between border-b ${
-        scrolled ? 'bg-white/95 shadow-md shadow-[var(--neutral-200)]/50 border-[var(--neutral-400)]/60 backdrop-blur-md' : 'bg-white/80 border-[var(--neutral-300)] backdrop-blur-md'
-      }`}>
-        <div className="flex items-center space-x-2.5 group cursor-pointer">
-          <div className="w-10 h-10 rounded-full bg-[var(--primary-blue-500)] flex items-center justify-center text-white font-black text-2xl shadow-lg shadow-[var(--primary-blue-500)]/30">C</div>
-          <div className="flex flex-col">
-            <span className="text-xl font-extrabold text-[var(--neutral-900)] tracking-tight leading-none">
-              Creatik <span className="text-[var(--primary-blue-500)] font-medium text-lg">IT Solution</span>
-            </span>
-            <span className="text-[9px] text-[var(--neutral-500)] font-bold uppercase tracking-widest mt-0.5">Enterprise Innovation</span>
-          </div>
-        </div>
+     
 
-        <nav className="hidden lg:flex items-center space-x-7 text-sm font-semibold text-[var(--neutral-600)]">
-          {navLinks.map((link) => (
-            <div 
-              key={link.label}
-              className="relative py-2"
-              onMouseEnter={() => link.hasDropdown && setActiveDropdown(link.label)}
-              onMouseLeave={() => setActiveDropdown(null)}
-            >
-              <a href={link.href} className={`flex items-center space-x-1.5 transition-colors ${link.label === "Home" ? "text-[var(--primary-blue-500)]" : "hover:text-[var(--primary-blue-500)]"}`}>
-                <span>{link.label}</span>
-                {link.hasDropdown && <ChevronDown className="w-3 h-3 text-[var(--neutral-500)]" />}
-              </a>
-              {link.hasDropdown && activeDropdown === link.label && (
-                <div className="absolute top-full left-1/2 -translate-x-1/2 w-64 bg-white border border-[var(--neutral-300)] rounded-2xl p-4 shadow-xl z-50 animate-in fade-in slide-in-from-top-2 duration-200">
-                  <div className="space-y-1.5">
-                    {link.dropdownItems?.map((item, idx) => (
-                      <a key={idx} href="#" className="block px-3 py-2 text-xs font-medium text-[var(--neutral-700)] rounded-xl hover:bg-[var(--primary-blue-50)] hover:text-[var(--primary-blue-600)] transition-all">{item}</a>
-                    ))}
-                  </div>
-                </div>
-              )}
-            </div>
-          ))}
-        </nav>
-
-        <div className="hidden sm:flex items-center space-x-3.5">
-          <button className="px-5 py-2.5 text-xs font-bold text-[var(--neutral-700)] bg-[var(--neutral-200)] border border-[var(--neutral-400)] rounded-full hover:bg-[var(--neutral-300)] cursor-pointer">Get a Quote</button>
-          <button className="px-5 py-2.5 text-xs font-bold text-white bg-[var(--primary-blue-500)] rounded-full hover:bg-[var(--primary-blue-600)] shadow-lg shadow-[var(--primary-blue-500)]/20 cursor-pointer">Contact Us</button>
-        </div>
-
-        <button onClick={() => setMobileMenuOpen(!mobileMenuOpen)} className="lg:hidden p-2 rounded-xl border border-[var(--neutral-400)] text-[var(--neutral-700)]">
-          {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
-        </button>
-      </header> */}
-
-      {/* =========================================================================
-          2. HERO SECTION (Dynamic Vector Canvas Map via GSAP Node Tracking)
-          ========================================================================= */}
+      {/* 
+           HERO SECTION (Dynamic Vector Canvas Map via GSAP Node Tracking)
+          */}
    <section 
   id="home" 
   ref={heroContainerRef} 
@@ -274,26 +223,103 @@ export default function HomePage() {
     <div className="max-w-2xl space-y-6">
       
       {/* Premium Eyebrow */}
-      <div className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-[#100556]/5 border border-[#100556]/10">
-        <span className="w-2 h-2 rounded-full bg-[#FF4B82]" />
-        <span className="text-sm font-semibold text-[#100556] tracking-widest uppercase">
-          Welcome to CreatikAi
-        </span>
-      </div>
+     <div className="inline-flex items-center gap-3  py-2.5 rounded-full overflow-hidden">
+      
+      {/* Animated Dot */}
+      <span className="relative flex h-2.5 w-2.5">
+        {/* <span className="absolute inline-flex h-full w-full rounded-full bg-[#FF4B82] opacity-70 animate-ping" />
+        <span className="relative inline-flex h-2.5 w-2.5 rounded-full bg-[#FF4B82]" /> */}
+      </span>
+      {/* Static + Animated Text */}
+{/* Static + Animated Text */}
+<div className="flex items-center">
+  
+  {/* Static Text */}
+  <span className="text-sm font-semibold tracking-[0.2em] uppercase text-[#100556] whitespace-nowrap">
+    Welcome to&nbsp;
+  </span>
+
+  {/* Animated Brand Name */}
+  <div className="relative h-5 overflow-hidden min-w-[110px]">
+    <AnimatePresence mode="wait">
+      {showCreative ? (
+        <motion.div
+          key="creative"
+          initial={{ y: 25, opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+          exit={{ y: -25, opacity: 0 }}
+          transition={{
+            duration: 0.7,
+            ease: [0.22, 1, 0.36, 1],
+          }}
+          className="absolute left-0 top-0 text-sm font-semibold tracking-[0.2em] uppercase whitespace-nowrap"
+        >
+          <span className="bg-gradient-to-r from-[#100556] via-[#7B2FF7] to-[#FF4B82] bg-clip-text text-transparent">
+            Creative AI
+          </span>
+        </motion.div>
+      ) : (
+        <motion.div
+          key="creatik"
+          initial={{ y: 25, opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+          exit={{ y: -25, opacity: 0 }}
+          transition={{
+            duration: 0.7,
+            ease: [0.22, 1, 0.36, 1],
+          }}
+          className="absolute left-0 top-0 text-sm font-semibold tracking-[0.2em] uppercase whitespace-nowrap"
+        >
+          <span className="bg-gradient-to-r from-[#100556] via-[#7B2FF7] to-[#FF4B82] bg-clip-text text-transparent">
+            CreatikAi
+          </span>
+        </motion.div>
+      )}
+    </AnimatePresence>
+  </div>
+</div>
+    </div>
 
       {/* Headline */}
-      <h1 className="space-y-1">
-        <span className="block text-4xl sm:text-5xl lg:text-6xl font-black tracking-tight text-[#100556] leading-[1.05]">
-          Transform Your
-        </span>
-        <span className="block text-4xl sm:text-5xl lg:text-6xl font-black tracking-tight leading-[1.05]">
-          <span className="text-[#100556]">Business</span>{' '}
-          <span className="relative inline-block text-[#0099FF]">
-            Future
-            <span className="absolute -bottom-1 left-0 w-full h-1 bg-[#FF4B82]/30 rounded-full" />
-          </span>
-        </span>
-      </h1>
+    <h1 className="space-y-1">
+  {/* First Line */}
+  <span
+    className="block text-4xl sm:text-5xl lg:text-6xl font-black tracking-tight leading-[1.05] 
+    bg-gradient-to-r from-[#100556] via-[#7B2FF7] to-[#FF4B82] 
+    bg-clip-text text-transparent"
+  >
+    Transform Your
+  </span>
+
+  {/* Second Line */}
+  <span className="block text-4xl sm:text-5xl lg:text-6xl font-black tracking-tight leading-[1.05]">
+    
+    {/* Business */}
+    <span
+      className="bg-gradient-to-r from-[#230eaf] via-[#6A11CB] to-[#FF4B82] 
+      bg-clip-text text-transparent"
+    >
+      Business
+    </span>{" "}
+
+    {/* Future */}
+    <span className="relative inline-block">
+      <span
+        className="text-[#e627b6] 
+       "
+      >
+        Future
+      </span>
+
+      {/* Glow Underline */}
+      {/* <span
+        className="absolute -bottom-1 left-0 w-full h-1 
+        bg-gradient-to-r from-[#7B2FF7] to-[#FF4B82] 
+        rounded-full blur-[1px]"
+      /> */}
+    </span>
+  </span>
+</h1>
 
       {/* Subheadline */}
       <p className="text-lg text-[#100556]/70 max-w-xl leading-relaxed font-medium">
@@ -319,314 +345,14 @@ export default function HomePage() {
   <div className="absolute top-0 right-0 w-1/3 h-full bg-gradient-to-l from-[#0099FF]/5 to-transparent" aria-hidden="true" />
 </section>
 <CreativeHero/>
-      {/* =========================================================================
-          3. LOGO RUNWAY STRIP
-          ========================================================================= */}
-      <section className=" py-10 px-6 text-center">
-        <p className="text-[16px] uppercase tracking-[0.2em] font-extrabold text-[var(--neutral-700)] mb-6">Trusted By Innovative Companies Worldwide</p>
-        <div className="max-w-7xl bg-white border-y border-[var(--neutral-400)]/60 shadow-2xl shadow-neutral-500 mx-auto px-6 rounded-xl flex flex-wrap items-center justify-center gap-12 md:gap-10  saturate-50">
-          <span className="text-lg font-bold tracking-tight text-[var(--neutral-700)]"><img width={160} src="/microsoft-logo.png"/></span>
-          <span className="text-lg font-black tracking-tighter text-[var(--neutral-800)] italic"><img width={90} src="/aws-logo.png"/></span>
-          <span className="text-md font-medium text-[var(--neutral-600)]"><img width={210} src="/google-cloude-logo.png"/></span>
-          <span className="text-lg font-semibold tracking-wide text-[var(--neutral-800)]"><img width={150} src="/meta-logo.png"/></span>
-          <span className="text-md font-extrabold text-[var(--neutral-700)]"><img width={160} src="/nvidia-logo.png"/></span>
-          <span className="text-md font-mono font-bold text-[var(--neutral-900)]"><img width={160} src="/openai-logo.png"/></span>
-        </div>
-      </section>
+  <AgencySection/>
 
-      {/* =========================================================================
-          4. INNOVATIVE SOLUTIONS CATALOG (Services Engine)
-          ========================================================================= */}
-      <section id="services" className="py-24 px-6 lg:px-16 max-w-7xl mx-auto">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-end mb-16">
-          <div className="lg:col-span-5 space-y-4">
-            <span className="text-xs font-bold text-[var(--primary-blue-500)] tracking-wider uppercase bg-[var(--primary-blue-50)] px-3 py-1 rounded-md">What We Do</span>
-            <h2 className="text-3xl sm:text-4xl font-black text-[var(--neutral-900)] tracking-tight leading-tight">Innovative Solutions. <br />Measurable <span className="text-[var(--primary-blue-500)]">Results</span>.</h2>
-          </div>
-          <div className="lg:col-span-7">
-            <p className="text-sm text-[var(--neutral-600)] max-w-xl leading-relaxed font-medium">We combine machine precision engineering, technical strategy, and architectural creativity to deliver robust end-to-end digital frameworks that clear internal bottlenecks and unlock market capture pathways.</p>
-          </div>
-        </div>
 
-        {/* 5-Card High Density Grid layout matching mock layout */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-6">
-          {servicesData.map((service, index) => (
-            <div 
-              key={service.id} 
-              onClick={() => setSelectedServiceTab(index)}
-              className={`bg-white border rounded-2xl p-6 shadow-xs transition-all duration-300 flex flex-col justify-between h-full group relative cursor-pointer ${
-                selectedServiceTab === index ? 'border-[var(--primary-blue-500)] ring-2 ring-[var(--primary-blue-500)]/10 shadow-xl' : 'border-[var(--neutral-300)] hover:border-[var(--neutral-400)]/80 hover:shadow-lg'
-              }`}
-            >
-              <div className="space-y-5">
-                <div className="flex items-center justify-between">
-                  <div className="w-11 h-11 rounded-xl flex items-center justify-center bg-[var(--neutral-200)] text-[var(--neutral-700)] group-hover:bg-[var(--primary-blue-500)] group-hover:text-white transition-colors shadow-xs">
-                    {React.cloneElement(service.icon, { className: "w-5 h-5" })}
-                  </div>
-                  <span className="text-[9px] font-bold text-[var(--neutral-500)] bg-[var(--neutral-200)] px-2 py-0.5 rounded uppercase tracking-wider">{service.badgeText}</span>
-                </div>
-                <div className="space-y-1.5">
-                  <h3 className="text-sm font-black text-[var(--neutral-900)] tracking-tight leading-snug group-hover:text-[var(--primary-blue-500)] transition-colors">{service.title}</h3>
-                  <p className="text-[9px] font-bold text-[var(--neutral-500)] uppercase tracking-wider">{service.tagline}</p>
-                  <p className="text-xs text-[var(--neutral-500)] font-medium leading-relaxed pt-1">{service.description}</p>
-                </div>
-              </div>
-              <div className="pt-6 flex items-center justify-between text-xs font-bold text-[var(--primary-blue-500)] group/link">
-                <span>Learn More</span><span className="transform group-hover/link:translate-x-1 transition-transform">➔</span>
-              </div>
-            </div>
-          ))}
-        </div>
+   
 
-        {/* Dynamic Spec Sheet Tab Panel Display */}
-        <div className="mt-8 w-full bg-white border border-[var(--neutral-300)] rounded-3xl p-6 lg:p-8 shadow-md grid grid-cols-1 md:grid-cols-12 gap-6 items-center">
-          <div className="md:col-span-4 space-y-1">
-            <span className="text-[9px] font-black text-[var(--primary-blue-500)] uppercase tracking-widest bg-[var(--primary-blue-50)] px-2 py-0.5 rounded">Active Blueprint Inspection</span>
-            <h4 className="text-base font-bold text-[var(--neutral-900)]">{servicesData[selectedServiceTab].title}</h4>
-            <p className="text-xs text-[var(--neutral-500)] font-medium">{servicesData[selectedServiceTab].description}</p>
-          </div>
-          <div className="md:col-span-8 grid grid-cols-1 sm:grid-cols-3 gap-3.5">
-            {servicesData[selectedServiceTab].features.map((feature, fIdx) => (
-              <div key={fIdx} className="flex items-center space-x-2.5 p-3 bg-[var(--neutral-200)] rounded-xl border border-[var(--neutral-300)]">
-                <div className="w-1.5 h-1.5 rounded-full bg-[var(--primary-blue-500)] shrink-0" />
-                <span className="text-xs font-bold text-[var(--neutral-700)] leading-tight">{feature}</span>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
 
-      {/* =========================================================================
-          5. METRICS HUD STRIP
-          ========================================================================= */}
-    <section className="relative w-full bg-[var(--neutral-900)] text-white py-16 lg:py-20 px-6 lg:px-16 overflow-hidden">
-  {/* Subtle ambient glow */}
-  <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[300px] bg-[var(--primary-blue-500)]/5 rounded-full blur-[120px] pointer-events-none" />
-  <div className="absolute top-0 right-0 w-[300px] h-[300px] bg-[var(--purple-500)]/5 rounded-full blur-[100px] pointer-events-none" />
-
-  {/* Background SVG Pattern */}
-  <svg
-    className="absolute inset-0 w-full h-full pointer-events-none opacity-[0.07]"
-    xmlns="http://www.w3.org/2000/svg"
-    preserveAspectRatio="none"
-  >
-    <defs>
-      <pattern id="metrics-grid" width="60" height="60" patternUnits="userSpaceOnUse">
-        <path
-          d="M 60 0 L 0 0 0 60"
-          fill="none"
-          stroke="url(#metrics-gradient)"
-          strokeWidth="0.5"
-        />
-        <circle cx="0" cy="0" r="1" fill="var(--primary-blue-500)" opacity="0.6" />
-      </pattern>
-      <linearGradient id="metrics-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
-        <stop offset="0%" stopColor="var(--primary-blue-500)" stopOpacity="0.4" />
-        <stop offset="50%" stopColor="var(--purple-500)" stopOpacity="0.2" />
-        <stop offset="100%" stopColor="var(--pink-400)" stopOpacity="0.1" />
-      </linearGradient>
-    </defs>
-    <rect width="100%" height="100%" fill="url(#metrics-grid)" />
-  </svg>
-
-  {/* Floating geometric accent shapes */}
-  <svg className="absolute top-8 left-8 w-16 h-16 text-[var(--primary-blue-500)]/10 pointer-events-none" viewBox="0 0 64 64" fill="none">
-    <circle cx="32" cy="32" r="30" stroke="currentColor" strokeWidth="1" strokeDasharray="4 4" />
-  </svg>
-  <svg className="absolute bottom-8 right-12 w-20 h-20 text-[var(--purple-500)]/10 pointer-events-none" viewBox="0 0 80 80" fill="none">
-    <rect x="10" y="10" width="60" height="60" rx="12" stroke="currentColor" strokeWidth="1" strokeDasharray="4 4" />
-  </svg>
-
-  <div className="relative z-10 max-w-7xl mx-auto grid grid-cols-2 lg:grid-cols-4 gap-8 lg:gap-6 text-center">
-    {metricsData.map((metric, index) => (
-      <div
-        key={metric.id}
-        className={`
-          relative group space-y-3 p-4 rounded-2xl transition-all duration-300
-          hover:bg-[var(--neutral-800)]/40
-          ${metric.borderRight ? 'lg:border-r lg:border-[var(--neutral-800)]/60' : ''}
-        `}
-      >
-        {/* Icon container */}
-        <div className="inline-flex items-center justify-center w-12 h-12 rounded-xl bg-gradient-to-br from-[var(--neutral-800)] to-[var(--neutral-900)] text-[var(--primary-blue-400)] border border-[var(--neutral-800)] shadow-[0_4px_20px_rgba(91,124,255,0.08)] group-hover:shadow-[0_4px_24px_rgba(91,124,255,0.15)] group-hover:border-[var(--primary-blue-500)]/30 transition-all duration-300">
-          {metric.icon}
-        </div>
-
-        {/* Value with gradient */}
-        <h3
-          className="text-3xl sm:text-4xl font-black tracking-tight"
-          style={{
-            background: 'linear-gradient(135deg, #ffffff 0%, var(--primary-blue-300) 100%)',
-            WebkitBackgroundClip: 'text',
-            WebkitTextFillColor: 'transparent',
-          }}
-        >
-          {metric.value}
-        </h3>
-
-        {/* Label */}
-        <div className="space-y-1">
-          <p className="text-xs font-bold text-[var(--neutral-200)] tracking-wide uppercase">
-            {metric.label}
-          </p>
-          <p className="text-[10px] text-[var(--neutral-600)] font-medium leading-relaxed">
-            {metric.subLabel}
-          </p>
-        </div>
-
-        {/* Bottom accent line on hover */}
-        <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-0 h-[2px] bg-gradient-to-r from-[var(--primary-blue-500)] to-[var(--purple-500)] rounded-full group-hover:w-12 transition-all duration-300" />
-      </div>
-    ))}
-  </div>
-</section>
-
-      {/* =========================================================================
-          6. DIGITAL TRANSFORMATION HUB (Media Badging & Overlays)
-          ========================================================================= */}
-      <section id="about" className="py-24 px-6 lg:px-16 max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-16 items-center">
-        <div className="lg:col-span-5 space-y-6">
-          <span className="text-xs font-bold text-[var(--primary-blue-500)] tracking-wider uppercase bg-[var(--primary-blue-50)] px-3 py-1 rounded-md">About Us</span>
-          <h2 className="text-3xl sm:text-4xl font-black text-[var(--neutral-900)] tracking-tight leading-tight">Your Technology Partner <br />in <span className="text-[var(--primary-blue-500)]">Digital Transformation</span></h2>
-          <p className="text-sm text-[var(--neutral-600)] leading-relaxed font-medium">Creatik IT Solution is a high-capability, dynamic systems engineering and technological advisory firm dedicated to forging high-performance software modules for complex businesses.</p>
-          <p className="text-sm text-[var(--neutral-600)] leading-relaxed font-medium">We inject maximum speed, continuous automation loops, and high-level platform protection systems into every transactional node we launch.</p>
-
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1 text-xs font-bold text-[var(--neutral-700)]">
-            <div className="flex items-center space-x-2.5"><CheckCircle2 className="w-4 h-4 text-[var(--primary-blue-500)] shrink-0" /> <span>Client-Centric Approach</span></div>
-            <div className="flex items-center space-x-2.5"><CheckCircle2 className="w-4 h-4 text-[var(--primary-blue-500)] shrink-0" /> <span>Secure & Reliable Delivery</span></div>
-            <div className="flex items-center space-x-2.5"><CheckCircle2 className="w-4 h-4 text-[var(--primary-blue-500)] shrink-0" /> <span>Agile & Scalable Solutions</span></div>
-            <div className="flex items-center space-x-2.5"><CheckCircle2 className="w-4 h-4 text-[var(--primary-blue-500)] shrink-0" /> <span>Innovation at the Core</span></div>
-          </div>
-          <div className="pt-2"><button className="flex items-center space-x-2 px-6 py-3.5 bg-[var(--primary-blue-500)] text-white font-bold text-xs rounded-xl hover:bg-[var(--primary-blue-600)] transition-all cursor-pointer"><span>Know More About Us</span><ArrowRight className="w-4 h-4" /></button></div>
-        </div>
-
-        {/* Right Media Frame Overlay block */}
-        <div className="lg:col-span-7 relative">
-          <div className="relative w-full h-[350px] rounded-3xl bg-[var(--neutral-900)] overflow-hidden shadow-2xl border border-[var(--neutral-800)]">
-            <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-black/30 z-10" />
-            <div className="absolute inset-0 opacity-40 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-[var(--primary-blue-700)] via-[var(--purple-900)] to-[var(--neutral-950)] mix-blend-color-dodge" />
-            <div className="absolute top-8 left-8 z-20 text-white font-extrabold flex items-center space-x-2 bg-black/40 px-3 py-1.5 rounded-full border border-white/10 backdrop-blur-sm">
-              <span className="text-[var(--primary-blue-500)] text-md">❖</span><span className="tracking-wide text-xs">Creatik IT Labs</span>
-            </div>
-            <button onClick={() => setVideoModalOpen(true)} className="absolute inset-0 m-auto w-16 h-16 bg-[var(--primary-blue-500)] hover:bg-[var(--primary-blue-600)] text-white rounded-full flex items-center justify-center shadow-2xl transition-all cursor-pointer">
-              <Play className="w-6 h-6 fill-current ml-1" />
-            </button>
-          </div>
-
-          {/* Three Overlapping Metric Highlight Cards Array mapping from image layout */}
-          <div className="absolute -bottom-10 left-4 right-4 grid grid-cols-3 gap-3.5 z-30">
-            <div className="bg-white border border-[var(--neutral-300)] p-4 rounded-2xl shadow-xl text-center">
-              <h4 className="text-2xl font-black text-[var(--primary-blue-500)]">10+</h4>
-              <p className="text-[9px] text-[var(--neutral-500)] mt-0.5 uppercase font-extrabold tracking-wider">Years Experience</p>
-            </div>
-            <div className="bg-[var(--primary-blue-500)] p-4 rounded-2xl shadow-xl text-center text-white flex flex-col items-center justify-center">
-              <Users className="w-4 h-4 mb-0.5 text-[var(--primary-blue-200)]" />
-              <p className="text-[9px] font-extrabold uppercase tracking-wider leading-tight">Delivering Digital Excellence</p>
-            </div>
-            <div className="bg-white border border-[var(--neutral-300)] p-4 rounded-2xl shadow-xl text-center">
-              <h4 className="text-2xl font-black text-[var(--primary-blue-500)]">100%</h4>
-              <p className="text-[9px] text-[var(--neutral-500)] mt-0.5 uppercase font-extrabold tracking-wider">Client Devotion</p>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* =========================================================================
-          7. STRUCTURAL ACCORDION EXPANSE
-          ========================================================================= */}
-      <section id="solutions" className="pt-28 pb-16 px-6 lg:px-16 max-w-7xl mx-auto">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
-          <div className="lg:col-span-4 bg-gradient-to-br from-[var(--neutral-900)] to-[var(--primary-blue-900)] text-white rounded-3xl p-6 space-y-5 border border-[var(--neutral-800)] shadow-lg">
-            <Terminal className="w-7 h-7 text-[var(--primary-blue-400)]" />
-            <h3 className="text-md font-bold tracking-tight">Developer Compliance Ready</h3>
-            <p className="text-xs text-[var(--neutral-500)] leading-relaxed font-medium">All deployment endpoints support unified telemetry formatting, OpenAPI specification generation models, and encrypted webhooks natively.</p>
-            <div className="pt-2 border-t border-[var(--neutral-800)] text-[11px] font-mono text-[var(--primary-blue-300)] flex items-center justify-between">
-              <span>$ curl -X GET https://api.creatik.it</span><ExternalLink className="w-3 h-3" />
-            </div>
-          </div>
-
-          <div className="lg:col-span-8 space-y-3">
-            {faqData.map((faq, index) => (
-              <div key={faq.id} className="bg-white border border-[var(--neutral-300)] rounded-xl overflow-hidden shadow-xs">
-                <button onClick={() => setFaqOpen(faqOpen === index ? null : index)} className="w-full flex items-center justify-between p-4 font-bold text-sm text-[var(--neutral-800)] hover:text-[var(--primary-blue-500)] transition-colors text-left cursor-pointer">
-                  <span>{faq.question}</span><ChevronDown className={`w-4 h-4 text-[var(--neutral-500)] transition-transform ${faqOpen === index ? 'rotate-180 text-[var(--primary-blue-500)]' : ''}`} />
-                </button>
-                {faqOpen === index && <div className="px-4 pb-4 pt-1 text-xs text-[var(--neutral-500)] font-medium leading-relaxed border-t border-[var(--neutral-200)]">{faq.answer}</div>}
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* =========================================================================
-          8. TESTIMONIALS SYSTEM (Active Carousel UI Sync)
-          ========================================================================= */}
-      <section id="resources" className="py-24 px-6 lg:px-16 bg-[var(--neutral-200)]">
-        <div className="max-w-7xl mx-auto text-center space-y-3 mb-16">
-          <span className="text-xs font-bold text-[var(--primary-blue-500)] tracking-wider uppercase bg-[var(--primary-blue-50)] px-3 py-1 rounded-md">What Our Clients Say</span>
-          <h2 className="text-3xl sm:text-4xl font-black text-[var(--neutral-900)] tracking-tight">Trusted by Businesses. <span className="text-[var(--primary-blue-500)]">Proven by Results.</span></h2>
-        </div>
-
-        <div className="max-w-6xl mx-auto relative flex items-center justify-center">
-          <button className="absolute left-0 lg:-left-6 z-20 w-11 h-11 bg-white border border-[var(--neutral-400)] text-[var(--neutral-600)] rounded-full flex items-center justify-center shadow-lg hover:text-[var(--primary-blue-500)] cursor-pointer"><ChevronLeft className="w-5 h-5" /></button>
-
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 w-full px-10">
-            {testimonialsData.map((testimonial, tIdx) => {
-              const isCenter = tIdx === currentTestimonialIndex;
-              return (
-                <div key={testimonial.id} className={`bg-white rounded-2xl p-6 border transition-all duration-300 flex flex-col justify-between space-y-6 ${isCenter ? 'border-[var(--primary-blue-400)] ring-4 ring-[var(--primary-blue-500)]/5 shadow-xl relative z-10' : 'border-[var(--neutral-400)]/60 opacity-60 hidden md:flex'}`}>
-                  <div className="space-y-3">
-                    <div className="flex items-center space-x-1 text-[var(--warning-400)]">
-                      {[...Array(testimonial.rating)].map((_, i) => <Star key={i} className="w-3.5 h-3.5 fill-current" />)}
-                    </div>
-                    <p className="text-xs text-[var(--neutral-600)] font-medium italic leading-relaxed">"{testimonial.quote}"</p>
-                  </div>
-                  <div className="flex items-center space-x-3 pt-2 border-t border-[var(--neutral-200)]">
-                    <img className="w-10 h-10 rounded-full object-cover" src={testimonial.avatarUrl} alt={testimonial.name} />
-                    <div>
-                      <h4 className="text-xs font-black text-[var(--neutral-900)]">{testimonial.name}</h4>
-                      <p className="text-[10px] text-[var(--neutral-500)] font-bold uppercase tracking-wider">{testimonial.role}, <span className="text-[var(--primary-blue-500)]">{testimonial.company}</span></p>
-                    </div>
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-
-          <button  className="absolute right-0 lg:-right-6 z-20 w-11 h-11 bg-white border border-[var(--neutral-400)] text-[var(--neutral-600)] rounded-full flex items-center justify-center shadow-lg hover:text-[var(--primary-blue-500)] cursor-pointer"><ChevronRight className="w-5 h-5" /></button>
-        </div>
-      </section>
-
-      {/* =========================================================================
-          9. BOTTOM CTAs
-          ========================================================================= */}
-      <section className="max-w-6xl mx-auto my-20 px-6">
-        <div className="w-full bg-gradient-to-r from-[var(--primary-blue-50)]/80 via-[var(--purple-50)]/50 to-[var(--pink-50)]/60 rounded-3xl border border-[var(--primary-blue-100)]/70 p-8 md:p-14 flex flex-col lg:flex-row items-center justify-between gap-8 shadow-xs">
-          <div className="space-y-1.5 text-center lg:text-left">
-            <h3 className="text-2xl font-black text-[var(--neutral-900)] tracking-tight">Ready to Transform Your Business?</h3>
-            <p className="text-xs sm:text-sm text-[var(--neutral-500)] font-bold">Let's craft high-throughput infrastructure models and build something truly extraordinary together.</p>
-          </div>
-          <button className="flex items-center space-x-2 px-8 py-4 bg-[var(--primary-blue-500)] text-white font-extrabold text-xs rounded-xl hover:bg-[var(--primary-blue-600)] shadow-xl shadow-[var(--primary-blue-500)]/10 transition-all cursor-pointer whitespace-nowrap">
-            <span>Get in Touch Immediately</span><ArrowRight className="w-4 h-4" />
-          </button>
-        </div>
-      </section>
-
-      {/* Decorative Video Modal Mock Layer */}
-      {videoModalOpen && (
-        <div className="fixed inset-0 bg-black/80 backdrop-blur-md z-[100] flex items-center justify-center p-4 animate-in fade-in duration-300">
-          <div className="bg-[var(--neutral-950)] border border-[var(--neutral-800)] w-full max-w-3xl rounded-3xl p-3 relative shadow-2xl">
-            <div className="flex items-center justify-between px-3 py-1 text-white mb-2">
-              <span className="text-xs font-mono text-[var(--neutral-500)]">Stream Buffer</span>
-              <button onClick={() => setVideoModalOpen(false)} className="text-[var(--neutral-500)] hover:text-white cursor-pointer"><X className="w-4 h-4" /></button>
-            </div>
-            <div className="aspect-video w-full rounded-2xl bg-black flex flex-col items-center justify-center">
-              <p className="text-xs font-mono text-[var(--neutral-500)]">Initializing Core Decryption Stream...</p>
-            </div>
-          </div>
-        </div>
-      )}
-
+  
+   
     </div>
   );
 }

@@ -132,3 +132,10 @@
       rgba(255,105,210,0.25)
     );
 }
+
+/* this is for spin button border */
+@keyframes spin {
+  100% {
+    transform: rotate(360deg);
+  }
+}
