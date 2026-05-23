@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect, useRef, useLayoutEffect } from 'react';
 import gsap from 'gsap';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { 
   ArrowRight, PhoneCall, Cpu, Network, Cloud, Code, BarChart3, 
   Briefcase, Star, Users, Globe2, CheckCircle2, Play, ChevronLeft, 
@@ -9,9 +10,11 @@ import {
   ChevronDown, Menu, X, Mail, MapPin, Terminal, ExternalLink
 } from 'lucide-react';
 import { FaLinkedin, FaTwitter } from 'react-icons/fa6';
+import { AnimatePresence, motion } from 'framer-motion';
 import CreativeHero from './creativehero';
-import { AnimatePresence,motion } from 'framer-motion';
 import AgencySection from './solution-agencys';
+
+gsap.registerPlugin(ScrollTrigger);
 
 // =========================================================================
 // INTERFACES & STATIC CONFIGURATIONS
@@ -51,7 +54,17 @@ export default function HomePage() {
   const [selectedServiceTab, setSelectedServiceTab] = useState<number>(0);
   const [faqOpen, setFaqOpen] = useState<number | null>(0);
   const [videoModalOpen, setVideoModalOpen] = useState<boolean>(false);
-   const [showCreative, setShowCreative] = useState(true);
+  const [showCreative, setShowCreative] = useState(true);
+
+  // =========================================================================
+  // CROSS-SECTION ROBOT JOURNEY REFS
+  // =========================================================================
+  const robotOverlayRef = useRef<HTMLDivElement>(null);
+  const creativeHeroRef = useRef<HTMLElement>(null);
+  const agencySectionRef = useRef<HTMLDivElement>(null);
+  const laptopRef = useRef<HTMLDivElement>(null);
+  const section4ImageRef = useRef<HTMLDivElement>(null);
+
   // =========================================================================
   // DOM REFS FOR GSAP DYNAMIC SVG NETWORK LINES
   // =========================================================================
@@ -71,12 +84,12 @@ export default function HomePage() {
   const pathCloudRef = useRef<SVGPathElement>(null);
   const pathCustomRef = useRef<SVGPathElement>(null);
   const pathDataRef = useRef<SVGPathElement>(null);
-    // Infinite Toggle Animation
+
+  // Infinite Toggle Animation
   useEffect(() => {
     const interval = setInterval(() => {
       setShowCreative((prev) => !prev);
     }, 2500);
-
     return () => clearInterval(interval);
   }, []);
 
@@ -87,6 +100,77 @@ export default function HomePage() {
     };
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
+  // =========================================================================
+  // MASTER ROBOT JOURNEY TIMELINE
+  // =========================================================================
+  useLayoutEffect(() => {
+    if (!robotOverlayRef.current || !creativeHeroRef.current || !agencySectionRef.current) return;
+
+    const ctx = gsap.context(() => {
+      // Master timeline: spans from Section 2 center (drop landing) to Section 4 bottom
+      const masterTl = gsap.timeline({
+        scrollTrigger: {
+          trigger: creativeHeroRef.current,
+          start: "center center",       // Drop has landed → robot appears
+          endTrigger: agencySectionRef.current,
+          end: "bottom center",         // Journey ends when AgencySection leaves
+          scrub: 1,
+          invalidateOnRefresh: true,
+        }
+      });
+
+      // Phase 1: Robot appears at Section 2 right side (0% – 10%)
+      masterTl.fromTo(
+        robotOverlayRef.current,
+        { opacity: 0, scale: 0.5, x: "35vw" },
+        { opacity: 1, scale: 1, x: "35vw", duration: 0.1, ease: "back.out(1.7)" }
+      );
+
+      // Phase 2: Travel from Section 2 (right) → Section 3 (left) (10% – 45%)
+      masterTl.to(
+        robotOverlayRef.current,
+        { x: "-30vw", duration: 0.35, ease: "power1.inOut" },
+        0.1
+      );
+
+      // Phase 3: Travel from Section 3 (left) → Section 4 (right) (45% – 80%)
+      masterTl.to(
+        robotOverlayRef.current,
+        { x: "30vw", duration: 0.35, ease: "power1.inOut" },
+        0.45
+      );
+
+      // Phase 4: Settle in Section 4 (80% – 100%)
+      masterTl.to(
+        robotOverlayRef.current,
+        { scale: 1.05, duration: 0.2, ease: "power2.out" },
+        0.8
+      );
+
+      // Laptop slides down as robot approaches Section 3 (20% – 45%)
+      if (laptopRef.current) {
+        masterTl.fromTo(
+          laptopRef.current,
+          { y: 0, opacity: 1 },
+          { y: 150, opacity: 0, duration: 0.25, ease: "power2.in" },
+          0.2
+        );
+      }
+
+      // Section 4 image fades out as robot arrives (60% – 85%)
+      if (section4ImageRef.current) {
+        masterTl.fromTo(
+          section4ImageRef.current,
+          { opacity: 1, scale: 1 },
+          { opacity: 0, scale: 0.9, duration: 0.25, ease: "power2.in" },
+          0.6
+        );
+      }
+    });
+
+    return () => ctx.revert();
   }, []);
 
   // =========================================================================
@@ -197,162 +281,140 @@ export default function HomePage() {
   ];
 
   return (
-    <div className="w-full bg-[var(--neutral-100)] text-[var(--neutral-700)]  font-sans overflow-x-hidden selection:bg-[var(--primary-blue-500)] selection:text-white antialiased">
+    <div className="w-full bg-[var(--neutral-100)] text-[var(--neutral-700)] font-sans overflow-x-hidden selection:bg-[var(--primary-blue-500)] selection:text-white antialiased">
 
-     
+      {/* =====================================================================
+          GLOBAL ROBOT OVERLAY — Cross-Section Journey Layer
+          Fixed viewport layer. Travels from Section 2 → 3 → 4.
+      ===================================================================== */}
+      <div className="fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 z-50 pointer-events-none">
+        <div
+          ref={robotOverlayRef}
+          className="w-[400px] h-[480px] opacity-0"
+          style={{
+            filter: "drop-shadow(0 0 30px rgba(0,153,255,0.25)) drop-shadow(0 0 60px rgba(123,47,247,0.15))",
+          }}
+        >
+          <img
+            src="/robo.png"
+            alt="AI Robot"
+            className="w-full h-full object-cover"
+          />
+        </div>
+      </div>
 
       {/* 
            HERO SECTION (Dynamic Vector Canvas Map via GSAP Node Tracking)
-          */}
-   <section 
-  id="home" 
-  ref={heroContainerRef} 
-  className="relative min-h-screen flex items-center pt-12 overflow-hidden bg-white"
->
-  {/* Clean Background Image - No Fog */}
-  <div 
-    className="absolute inset-0 bg-[url('/creatikai-hero-bg-big-screen.png')] bg-no-repeat bg-center bg-cover"
-    aria-hidden="true"
-  />
-  
-  {/* Sharp Gradient Overlay - No Blur/Fog */}
- 
-
-  {/* Content */}
-  <div className="relative z-10 w-full max-w-7xl mx-auto px-6 lg:px-16 py-32 lg:py-40">
-    <div className="max-w-2xl space-y-6">
-      
-      {/* Premium Eyebrow */}
-     <div className="inline-flex items-center gap-3  py-2.5 rounded-full overflow-hidden">
-      
-      {/* Animated Dot */}
-      <span className="relative flex h-2.5 w-2.5">
-        {/* <span className="absolute inline-flex h-full w-full rounded-full bg-[#FF4B82] opacity-70 animate-ping" />
-        <span className="relative inline-flex h-2.5 w-2.5 rounded-full bg-[#FF4B82]" /> */}
-      </span>
-      {/* Static + Animated Text */}
-{/* Static + Animated Text */}
-<div className="flex items-center">
-  
-  {/* Static Text */}
-  <span className="text-sm font-semibold tracking-[0.2em] uppercase text-[#100556] whitespace-nowrap">
-    Welcome to&nbsp;
-  </span>
-
-  {/* Animated Brand Name */}
-  <div className="relative h-5 overflow-hidden min-w-[110px]">
-    <AnimatePresence mode="wait">
-      {showCreative ? (
-        <motion.div
-          key="creative"
-          initial={{ y: 25, opacity: 0 }}
-          animate={{ y: 0, opacity: 1 }}
-          exit={{ y: -25, opacity: 0 }}
-          transition={{
-            duration: 0.7,
-            ease: [0.22, 1, 0.36, 1],
-          }}
-          className="absolute left-0 top-0 text-sm font-semibold tracking-[0.2em] uppercase whitespace-nowrap"
-        >
-          <span className="bg-gradient-to-r from-[#100556] via-[#7B2FF7] to-[#FF4B82] bg-clip-text text-transparent">
-            Creative AI
-          </span>
-        </motion.div>
-      ) : (
-        <motion.div
-          key="creatik"
-          initial={{ y: 25, opacity: 0 }}
-          animate={{ y: 0, opacity: 1 }}
-          exit={{ y: -25, opacity: 0 }}
-          transition={{
-            duration: 0.7,
-            ease: [0.22, 1, 0.36, 1],
-          }}
-          className="absolute left-0 top-0 text-sm font-semibold tracking-[0.2em] uppercase whitespace-nowrap"
-        >
-          <span className="bg-gradient-to-r from-[#100556] via-[#7B2FF7] to-[#FF4B82] bg-clip-text text-transparent">
-            CreatikAi
-          </span>
-        </motion.div>
-      )}
-    </AnimatePresence>
-  </div>
-</div>
-    </div>
-
-      {/* Headline */}
-    <h1 className="space-y-1">
-  {/* First Line */}
-  <span
-    className="block text-4xl sm:text-5xl lg:text-6xl font-black tracking-tight leading-[1.05] 
-    bg-gradient-to-r from-[#100556] via-[#7B2FF7] to-[#FF4B82] 
-    bg-clip-text text-transparent"
-  >
-    Transform Your
-  </span>
-
-  {/* Second Line */}
-  <span className="block text-4xl sm:text-5xl lg:text-6xl font-black tracking-tight leading-[1.05]">
-    
-    {/* Business */}
-    <span
-      className="bg-gradient-to-r from-[#230eaf] via-[#6A11CB] to-[#FF4B82] 
-      bg-clip-text text-transparent"
-    >
-      Business
-    </span>{" "}
-
-    {/* Future */}
-    <span className="relative inline-block">
-      <span
-        className="text-[#e627b6] 
-       "
+      */}
+      <section 
+        id="home" 
+        ref={heroContainerRef} 
+        className="relative min-h-screen flex items-center pt-12 overflow-hidden bg-white"
       >
-        Future
-      </span>
+        {/* Clean Background Image - No Fog */}
+        <div 
+          className="absolute inset-0 bg-[url('/creatikai-hero-bg-big-screen.png')] bg-no-repeat bg-center bg-cover"
+          aria-hidden="true"
+        />
+        
+        {/* Content */}
+        <div className="relative z-10 w-full max-w-7xl mx-auto px-6 lg:px-16 py-32 lg:py-40">
+          <div className="max-w-2xl space-y-6">
+            
+            {/* Premium Eyebrow */}
+            <div className="inline-flex items-center gap-3 py-2.5 rounded-full overflow-hidden">
+              <span className="relative flex h-2.5 w-2.5">
+                {/* Animated Dot */}
+              </span>
+              <div className="flex items-center">
+                <span className="text-sm font-semibold tracking-[0.2em] uppercase text-[#100556] whitespace-nowrap">
+                  Welcome to&nbsp;
+                </span>
+                <div className="relative h-5 overflow-hidden min-w-[110px]">
+                  <AnimatePresence mode="wait">
+                    {showCreative ? (
+                      <motion.div
+                        key="creative"
+                        initial={{ y: 25, opacity: 0 }}
+                        animate={{ y: 0, opacity: 1 }}
+                        exit={{ y: -25, opacity: 0 }}
+                        transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
+                        className="absolute left-0 top-0 text-sm font-semibold tracking-[0.2em] uppercase whitespace-nowrap"
+                      >
+                        <span className="bg-gradient-to-r from-[#100556] via-[#7B2FF7] to-[#FF4B82] bg-clip-text text-transparent">
+                          Creative AI
+                        </span>
+                      </motion.div>
+                    ) : (
+                      <motion.div
+                        key="creatik"
+                        initial={{ y: 25, opacity: 0 }}
+                        animate={{ y: 0, opacity: 1 }}
+                        exit={{ y: -25, opacity: 0 }}
+                        transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
+                        className="absolute left-0 top-0 text-sm font-semibold tracking-[0.2em] uppercase whitespace-nowrap"
+                      >
+                        <span className="bg-gradient-to-r from-[#100556] via-[#7B2FF7] to-[#FF4B82] bg-clip-text text-transparent">
+                          CreatikAi
+                        </span>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+                </div>
+              </div>
+            </div>
 
-      {/* Glow Underline */}
-      {/* <span
-        className="absolute -bottom-1 left-0 w-full h-1 
-        bg-gradient-to-r from-[#7B2FF7] to-[#FF4B82] 
-        rounded-full blur-[1px]"
-      /> */}
-    </span>
-  </span>
-</h1>
+            {/* Headline */}
+            <h1 className="space-y-1">
+              <span className="block text-4xl sm:text-5xl lg:text-6xl font-black tracking-tight leading-[1.05] bg-gradient-to-r from-[#100556] via-[#7B2FF7] to-[#FF4B82] bg-clip-text text-transparent">
+                Transform Your
+              </span>
+              <span className="block text-4xl sm:text-5xl lg:text-6xl font-black tracking-tight leading-[1.05]">
+                <span className="bg-gradient-to-r from-[#230eaf] via-[#6A11CB] to-[#FF4B82] bg-clip-text text-transparent">
+                  Business
+                </span>{" "}
+                <span className="relative inline-block">
+                  <span className="text-[#e627b6]">
+                    Future
+                  </span>
+                </span>
+              </span>
+            </h1>
 
-      {/* Subheadline */}
-      <p className="text-lg text-[#100556]/70 max-w-xl leading-relaxed font-medium">
-        We architect intelligent digital ecosystems that automate processes, 
-        unlock data-driven insights, and scale your operations beyond limits.
-      </p>
+            {/* Subheadline */}
+            <p className="text-lg text-[#100556]/70 max-w-xl leading-relaxed font-medium">
+              We architect intelligent digital ecosystems that automate processes, 
+              unlock data-driven insights, and scale your operations beyond limits.
+            </p>
 
-      {/* Premium Tags */}
-      <div className="flex flex-wrap gap-3 pt-2">
-        {['AI Infrastructure', 'Process Automation', 'Digital Transformation'].map((tag) => (
-          <span 
-            key={tag}
-            className="px-5 py-2.5 rounded-lg bg-white border border-[#100556]/10 text-sm font-semibold text-[#100556] shadow-sm shadow-[#100556]/5"
-          >
-            {tag}
-          </span>
-        ))}
-      </div>
-    </div>
-  </div>
+            {/* Premium Tags */}
+            <div className="flex flex-wrap gap-3 pt-2">
+              {['AI Infrastructure', 'Process Automation', 'Digital Transformation'].map((tag) => (
+                <span 
+                  key={tag}
+                  className="px-5 py-2.5 rounded-lg bg-white border border-[#100556]/10 text-sm font-semibold text-[#100556] shadow-sm shadow-[#100556]/5"
+                >
+                  {tag}
+                </span>
+              ))}
+            </div>
+          </div>
+        </div>
 
-  {/* Minimal Accent - Sharp Geometric */}
-  <div className="absolute top-0 right-0 w-1/3 h-full bg-gradient-to-l from-[#0099FF]/5 to-transparent" aria-hidden="true" />
-</section>
-<CreativeHero/>
-  <AgencySection/>
+        {/* Minimal Accent - Sharp Geometric */}
+        <div className="absolute top-0 right-0 w-1/3 h-full bg-gradient-to-l from-[#0099FF]/5 to-transparent" aria-hidden="true" />
+      </section>
 
+      {/* Section 2: Drop Animation — ref forwarded to HomePage for master timeline */}
+      <CreativeHero ref={creativeHeroRef} />
 
-   
+      {/* Sections 3 & 4: Agency — refs forwarded for laptop & image animations */}
+      <AgencySection 
+        ref={agencySectionRef}
+        laptopRef={laptopRef}
+        section4ImageRef={section4ImageRef}
+      />
 
-
-  
-   
     </div>
   );
 }

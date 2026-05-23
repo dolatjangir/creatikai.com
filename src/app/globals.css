@@ -139,3 +139,12 @@
     transform: rotate(360deg);
   }
 }
+
+/* for creativehero section text */
+.reveal-wrapper {
+  position: relative;
+}
+
+.reveal-text {
+  will-change: width;
+}

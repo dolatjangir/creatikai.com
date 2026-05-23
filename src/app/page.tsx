@@ -8,7 +8,7 @@ import AgencySection from '@/components/solution-agencys'
 function page() {
   return (
     <div className=''>
-      {/* <Navbar/> */}
+      <Navbar/>
     <HomePage/>
     {/* <MortgageLandingPage/> */}
     

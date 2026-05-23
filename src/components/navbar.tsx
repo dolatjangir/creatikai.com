@@ -4,7 +4,6 @@ import React, { useState, useRef, useEffect } from "react";
 import { Home, ArrowRight, Sparkles, Menu, X, ChevronDown } from "lucide-react";
 import Link from "next/link";
 
-
 // Define strict types for our navigation items
 interface NavItem {
   label: string;
@@ -58,6 +57,37 @@ export default function Navbar() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState<boolean>(false);
   const [hoveredNav, setHoveredNav] = useState<string | null>(null);
   const [mobileExpandedSubmenu, setMobileExpandedSubmenu] = useState<string | null>(null);
+
+  // ── Scroll-aware visibility ──────────────────────────────────────────────
+  const [isNavVisible, setIsNavVisible] = useState<boolean>(true);
+  const lastScrollY = useRef<number>(0);
+  const scrollThreshold = 10; // px — ignore tiny jitter
+
+  useEffect(() => {
+    const handleScroll = () => {
+      const currentScrollY = window.scrollY;
+      const diff = currentScrollY - lastScrollY.current;
+
+      if (Math.abs(diff) < scrollThreshold) return; // ignore micro-scroll
+
+      if (diff > 0) {
+        // Scrolling DOWN → hide navbar
+        setIsNavVisible(false);
+        // Close mobile menu too, so it doesn't float orphaned
+        setIsMobileMenuOpen(false);
+      } else {
+        // Scrolling UP → show navbar
+        setIsNavVisible(true);
+      }
+
+      lastScrollY.current = currentScrollY;
+    };
+
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+  // ────────────────────────────────────────────────────────────────────────
+
   const submenuTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   const navItems: NavItem[] = [
@@ -95,14 +125,24 @@ export default function Navbar() {
   }, []);
 
   return (
-    <header className="w-full fixed top-0 left-0 z-50 px-4 py-6 md:px-8 flex justify-center">
+    <header
+      className="w-full fixed top-0 left-0 z-50 px-4 py-6 md:px-8 flex justify-center"
+      style={{
+        // Slide up (hide) when scrolling down, slide back into view on scroll up.
+        // translate3d keeps it GPU-accelerated; transition gives the smooth ease.
+        transform: isNavVisible ? "translate3d(0, 0, 0)" : "translate3d(0, -120%, 0)",
+        transition: "transform 0.4s cubic-bezier(0.4, 0, 0.2, 1)",
+        // Keep pointer events off while hidden so nothing is accidentally clickable
+        pointerEvents: isNavVisible ? "auto" : "none",
+      }}
+    >
       {/* Main Navbar Container */}
       <nav className="w-full max-w-6xl bg-white/80 dark:bg-slate-900/80 backdrop-blur-xl rounded-full border border-slate-100 dark:border-slate-800 shadow-[0_8px_30px_rgb(0,0,0,0.04)] px-4 md:px-8 py-3 flex items-center justify-between transition-all duration-300 relative">
         
         {/* Left Side: Brand Logo */}
         <div className="flex items-center gap-2.5 group cursor-pointer select-none">
           <div className="relative flex items-center justify-center">
-            <img width={40} src="/creatikai-logo.png"/>
+            <img width={40} src="/creatikai-logo.png" alt="Creatik AI Logo" />
             {/* Top right tiny sparkle on Logo */}
             <Sparkles className="w-3 h-3 text-indigo-400 absolute -top-1 -right-1 opacity-80" />
           </div>
@@ -120,17 +160,18 @@ export default function Navbar() {
             const isSubmenuOpen = hoveredNav === item.label;
 
             return (
-              <div 
-                key={item.label} 
+              <div
+                key={item.label}
                 className="flex items-center relative"
                 onMouseEnter={() => hasSubmenu && handleMouseEnter(item.label)}
                 onMouseLeave={handleMouseLeave}
               >
-               <Link href={item.href}
+                <Link
+                  href={item.href}
                   onClick={() => setActiveTab(item.label)}
                   className={`relative px-5 py-2.5 text-sm font-medium transition-all duration-300 rounded-full flex items-center gap-2 cursor-pointer outline-none
-                    ${isActive 
-                      ? "text-blue-600 dark:text-blue-400 bg-blue-50/70 dark:bg-blue-950/40 shadow-sm" 
+                    ${isActive
+                      ? "text-blue-600 dark:text-blue-400 bg-blue-50/70 dark:bg-blue-950/40 shadow-sm"
                       : "text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white"
                     }
                   `}
@@ -138,8 +179,8 @@ export default function Navbar() {
                   {item.icon && <span className="opacity-90">{item.icon}</span>}
                   <span>{item.label}</span>
                   {hasSubmenu && (
-                    <ChevronDown 
-                      className={`w-3.5 h-3.5 transition-transform duration-200 ${isSubmenuOpen ? "rotate-180" : ""}`} 
+                    <ChevronDown
+                      className={`w-3.5 h-3.5 transition-transform duration-200 ${isSubmenuOpen ? "rotate-180" : ""}`}
                     />
                   )}
 
@@ -151,7 +192,7 @@ export default function Navbar() {
 
                 {/* Desktop Submenu Dropdown */}
                 {hasSubmenu && isSubmenuOpen && (
-                  <div 
+                  <div
                     className="absolute top-full left-1/2 -translate-x-1/2 pt-3"
                     onMouseEnter={() => handleMouseEnter(item.label)}
                     onMouseLeave={handleMouseLeave}
@@ -196,8 +237,8 @@ export default function Navbar() {
             <span>Do</span>
             <ArrowRight className="w-4 h-4 transition-transform duration-300 group-hover:translate-x-1" />
           </button>
-          
-          {/* Exact reproduction of the floating pink/purple magical sparkles on the top right edge */}
+
+          {/* Floating sparkles on top-right edge */}
           <div className="absolute -top-3 -right-2 pointer-events-none flex gap-1 select-none">
             <Sparkles className="w-4 h-4 text-purple-300/70 animate-pulse" />
             <Sparkles className="w-3 h-3 text-indigo-300/50 transform translate-y-3 -translate-x-1" />
@@ -227,7 +268,8 @@ export default function Navbar() {
 
               return (
                 <div key={item.label} className="flex flex-col">
-                <Link href={item.href}
+                  <Link
+                    href={item.href}
                     onClick={() => {
                       if (hasSubmenu) {
                         setMobileExpandedSubmenu(isMobileSubmenuExpanded ? null : item.label);
@@ -237,8 +279,8 @@ export default function Navbar() {
                       }
                     }}
                     className={`w-full px-4 py-3 text-left font-medium text-sm rounded-xl flex items-center justify-between gap-3 transition-colors
-                      ${isActive 
-                        ? "text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-950/30" 
+                      ${isActive
+                        ? "text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-950/30"
                         : "text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800/50"
                       }
                     `}
@@ -248,8 +290,8 @@ export default function Navbar() {
                       <span>{item.label}</span>
                     </div>
                     {hasSubmenu && (
-                      <ChevronDown 
-                        className={`w-4 h-4 transition-transform duration-200 ${isMobileSubmenuExpanded ? "rotate-180" : ""}`} 
+                      <ChevronDown
+                        className={`w-4 h-4 transition-transform duration-200 ${isMobileSubmenuExpanded ? "rotate-180" : ""}`}
                       />
                     )}
                   </Link>
