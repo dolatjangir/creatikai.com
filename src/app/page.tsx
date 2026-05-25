@@ -9,8 +9,8 @@ function page() {
   return (
     <div className=''>
       <Navbar/>
-    <HomePage/>
-    {/* <MortgageLandingPage/> */}
+    {/* <HomePage/> */}
+    <MortgageLandingPage/>
     
      <FooterSection/>
     </div>
